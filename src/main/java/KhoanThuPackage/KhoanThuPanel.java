@@ -27,7 +27,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class KhoanThuPanel extends javax.swing.JPanel {
     
     private Service service = new Service();
-   
+    private int currentPage = -1;
     public KhoanThuPanel() {
         initComponents();
         init();
@@ -116,6 +116,7 @@ public class KhoanThuPanel extends javax.swing.JPanel {
 
     // Phương thức tải dữ liệu cho bảng
     private void loadData(int page) {
+        currentPage = page;
         try {
             // Lấy model của bảng
             DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -392,8 +393,8 @@ public class KhoanThuPanel extends javax.swing.JPanel {
                     Notifications.getInstance().show(Notifications.Type.SUCCESS, "Khoản thu mới đã được tạo");
 
                     // Tải lại dữ liệu sau khi tạo mới
-                    loadData(1); // Thêm để khi xóa toàn bộ bảng, tạo Khoản thu mới thì hiện trên giao diện
-
+                    loadData(currentPage); // Thêm để khi xóa toàn bộ bảng, tạo Khoản thu mới thì hiện trên giao diện
+                    initPagination();
                 } catch (Exception e) {
                     e.printStackTrace();
                     Notifications.getInstance().show(Notifications.Type.ERROR, "Đã có lỗi xảy ra trong quá trình tạo khoản thu!");
@@ -447,7 +448,8 @@ public class KhoanThuPanel extends javax.swing.JPanel {
                         pc.closePopup();
                         Notifications.getInstance().show(Notifications.Type.SUCCESS, "Khoản thu đã được cập nhật thành công!");
 
-                        loadData(1); 
+                        loadData(currentPage);
+                        initPagination();
 
                     } catch (Exception e) {
                         e.printStackTrace();

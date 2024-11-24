@@ -28,10 +28,11 @@ import raven.toast.Notifications;
 
 public class TaiKhoanPanel extends javax.swing.JPanel {
 
-   
+    private int currentPage = -1;
     public TaiKhoanPanel() {
         initComponents();
         init();
+        initPagination();
         loadData(1);
     }
     private void init(){
@@ -112,6 +113,7 @@ public class TaiKhoanPanel extends javax.swing.JPanel {
 
     // Phương thức tải dữ liệu cho bảng
     private void loadData(int page) {
+        currentPage = page;
         try {
             // Lấy model của bảng
             DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -382,7 +384,8 @@ public class TaiKhoanPanel extends javax.swing.JPanel {
                     Notifications.getInstance().show(Notifications.Type.SUCCESS, "Tài khoản đã được chỉnh sửa thành công");
 
                     // Tải lại dữ liệu từ database để cập nhật bảng
-                    loadData(1);  // Hàm load lại dữ liệu sau khi chỉnh sửa
+                    loadData(currentPage);  // Hàm load lại dữ liệu sau khi chỉnh sửa
+                    initPagination();
                 } catch (Exception e) {
                     e.printStackTrace();
                     JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi chỉnh sửa tài khoản!");
@@ -425,7 +428,8 @@ public class TaiKhoanPanel extends javax.swing.JPanel {
                         return; // Nếu có lỗi, dừng và không tiếp tục
                     }
                 }
-                loadData(1); // Tải lại dữ liệu
+                loadData(currentPage);  // Hàm load lại dữ liệu sau khi chỉnh sửa
+                initPagination();
                 // Hiển thị thông báo với số lượng tài khoản đã duyệt
                 JOptionPane.showMessageDialog(this, "Duyệt thành công " + count + " tài khoản!");
             }
