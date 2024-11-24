@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.UUID;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -428,7 +429,7 @@ public class RegisterFrame extends javax.swing.JFrame {
             }
 
             // Câu lệnh SQL để thêm người dùng mới
-            query = "INSERT INTO tai_khoan(hoTen, ngaySinh, SĐT, CCCD, soPhong, tenDangNhap, matKhau, ghiChu, gioiTinh) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            query = "INSERT INTO tai_khoan(hoTen, ngaySinh, SĐT, CCCD, soPhong, tenDangNhap, matKhau, ghiChu, gioiTinh, ID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pstmt = con.prepareStatement(query);
             pstmt.setString(1, fullName);
             pstmt.setDate(2, dob); // Sử dụng kiểu Date cho trường ngày sinh
@@ -439,6 +440,7 @@ public class RegisterFrame extends javax.swing.JFrame {
             pstmt.setString(7, password);
             pstmt.setString(8, "Chưa duyệt");
             pstmt.setBoolean(9, gender);
+            pstmt.setString(10, UUID.randomUUID().toString());
             pstmt.executeUpdate();
             
 
