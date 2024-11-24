@@ -106,7 +106,7 @@ public class ModelTaiKhoan extends Model {
 
     // Chuyển đối tượng thành dòng dữ liệu (ví dụ để hiển thị trong bảng)
     public Object[] toTableRow(int rowNum) {
-        DateFormat df = new SimpleDateFormat("dd-mm-yyyy");
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         return new Object[] {
             false, // Một giá trị check-box mặc định (ví dụ trong JTable)
             rowNum,

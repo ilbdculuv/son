@@ -1,6 +1,8 @@
 package Model;
 
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 
 public class ModelThongBao extends Model {
@@ -48,7 +50,8 @@ public class ModelThongBao extends Model {
 
     // Phương thức toTableRow trả về mảng đối tượng tương ứng với mỗi dòng trong bảng
     public Object[] toTableRow(int index) {
-        return new Object[]{false, ngayDang, this, noiDung }; // Trả về mảng chứa chỉ số thứ tự và nội dung thông báo
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        return new Object[]{false, ngayDang == null ? "" : df.format(ngayDang), this, noiDung }; // Trả về mảng chứa chỉ số thứ tự và nội dung thông báo
     }
 
     

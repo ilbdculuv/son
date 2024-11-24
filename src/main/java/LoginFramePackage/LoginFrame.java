@@ -13,7 +13,9 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -225,46 +227,55 @@ public class LoginFrame extends javax.swing.JFrame {
         String LoginName, Password, query, passDb = null;
         int notFound = 0;
 
-        try{
+        try {
             Connection con = Database.DatabaseConnection.getConnection();
-            if( con == null){
+            if (con == null) {
                 throw new Exception("Không thể kết nối cơ sở dữ liệu");
             }
 
-            Statement st = con.createStatement();
             if ("".equals(jTextFieldTenTaiKhoan.getText())) {
-                JOptionPane.showMessageDialog(new JFrame(), "Login Name is required", "Error",
-                    JOptionPane.ERROR_MESSAGE);
-            } else if ("".equals(jTextFieldMatKhau.getText())) {
-                JOptionPane.showMessageDialog(new JFrame(), "Password is required", "Error",
-                    JOptionPane.ERROR_MESSAGE);
-            } else {
-                LoginName = jTextFieldTenTaiKhoan.getText();
-                Password = jTextFieldMatKhau.getText();
+                JOptionPane.showMessageDialog(new JFrame(), "Login Name is required", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if ("".equals(jTextFieldMatKhau.getText())) {
+                JOptionPane.showMessageDialog(new JFrame(), "Password is required", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-                query = "SELECT * FROM nguoi_dung WHERE tenDangNhap = '" + LoginName + "'";
-                ResultSet rs = (ResultSet) st.executeQuery(query);
+            LoginName = jTextFieldTenTaiKhoan.getText();
+            Password = jTextFieldMatKhau.getText();
 
-                while (rs.next()) {
+            query = "SELECT matKhau FROM tai_khoan WHERE tenDangNhap = ? AND ghiChu = 'Đã duyệt'";
+
+            try (PreparedStatement stmt = con.prepareStatement(query)) {
+                stmt.setString(1, LoginName);
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
                     passDb = rs.getString("matKhau");
                     notFound = 1;
                 }
 
-                if (notFound == 1 && Password.equals(passDb)) {
+                if (notFound == 1 && Password.equals(passDb)) { 
+                    // Replace with a more secure password comparison, e.g. bcrypt
                     Home HomeFrame = new Home();
                     HomeFrame.setVisible(true);
                     HomeFrame.pack();
                     HomeFrame.setLocationRelativeTo(null);
                     this.dispose();
                 } else {
-                    JOptionPane.showMessageDialog(new JFrame(), "INCORRECT LOGIN NAME OR PASSWORD", "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(new JFrame(), "INCORRECT LOGIN NAME OR PASSWORD", "Error", JOptionPane.ERROR_MESSAGE);
                 }
 
-                jTextFieldMatKhau.setText("");
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "Đã xảy ra lỗi trong quá trình đăng nhập", e);
+                JOptionPane.showMessageDialog(new JFrame(), "Error during login process", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        }catch(Exception e){
+
+            jTextFieldMatKhau.setText("");
+        } catch (Exception e) {
             logger.log(Level.SEVERE, "Đã xảy ra lỗi trong quá trình đăng nhập", e);
+            JOptionPane.showMessageDialog(new JFrame(), "General error", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButtonDangNhapActionPerformed
 

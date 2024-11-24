@@ -110,7 +110,7 @@ public class ModelKhoanThu extends Model {
     }
     
     public Object[] toTableRow(int rowNum){
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         NumberFormat nf = new DecimalFormat("#, ##0.##");
         return new Object[]{
             false, 

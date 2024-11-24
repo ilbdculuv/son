@@ -206,7 +206,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txtSearch">
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtSearchActionPerformed"/>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtSearchKeyReleased"/>
           </Events>
         </Component>
         <Component class="Model.ButtonAction" name="buttonEdit">
@@ -221,6 +221,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="X&#xf3;a"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonDeleteActionPerformed"/>
+          </Events>
         </Component>
         <Component class="Model.ButtonAction" name="buttonApprove">
           <Properties>

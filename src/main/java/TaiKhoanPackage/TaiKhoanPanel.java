@@ -253,9 +253,9 @@ public class TaiKhoanPanel extends javax.swing.JPanel {
             table.getColumnModel().getColumn(10).setMaxWidth(0);
         }
 
-        txtSearch.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtSearchActionPerformed(evt);
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchKeyReleased(evt);
             }
         });
 
@@ -267,6 +267,11 @@ public class TaiKhoanPanel extends javax.swing.JPanel {
         });
 
         buttonDelete.setText("Xóa");
+        buttonDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonDeleteActionPerformed(evt);
+            }
+        });
 
         buttonApprove.setText("Duyệt");
         buttonApprove.addActionListener(new java.awt.event.ActionListener() {
@@ -389,82 +394,75 @@ public class TaiKhoanPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_buttonEditActionPerformed
 
-    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
-        
-    }//GEN-LAST:event_txtSearchActionPerformed
-
     private void buttonApproveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonApproveActionPerformed
-        try {
-            // Lấy tất cả các hàng được chọn từ JTable (có checkbox)
-            int[] selectedRows = table.getSelectedRows();
-
-            if (selectedRows.length == 0) {
-                JOptionPane.showMessageDialog(this, "Vui lòng chọn ít nhất một dòng để duyệt.");
-                return;
-            }
-
-            // Kết nối tới cơ sở dữ liệu
-            Connection conn = Database.DatabaseConnection.getConnection();
-
-            // Chuẩn bị câu lệnh SQL
-            String updateTaiKhoanQuery = "UPDATE tai_khoan SET ghiChu = ? WHERE ID = ?";
-            String insertNguoiDungQuery = "INSERT INTO nguoi_dung (hoTen, ngaySinh, SĐT, tenDangNhap, CCCD, matKhau, soPhong) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-            PreparedStatement updateStatement = conn.prepareStatement(updateTaiKhoanQuery);
-            PreparedStatement insertStatement = conn.prepareStatement(insertNguoiDungQuery);
-
-            // Duyệt qua tất cả các dòng được chọn
-            for (int row : selectedRows) {
-                // Lấy giá trị ID từ bảng JTable (dòng hiện tại)
-                int id = (Integer) table.getValueAt(row, 1); // Cột 1 là ID
-
-                // Truy vấn dữ liệu chi tiết từ bảng tai_khoan (bảng MySQL)
-                String selectQuery = "SELECT * FROM tai_khoan WHERE ID = ?";
-                PreparedStatement selectStatement = conn.prepareStatement(selectQuery);
-                selectStatement.setInt(1, id); // Lấy dữ liệu theo ID
-                ResultSet rs = selectStatement.executeQuery();
-
-                if (rs.next()) {
-                    // Lấy thông tin từ bảng tai_khoan
-                    String hoTen = rs.getString("hoTen");
-                    String ngaySinh = rs.getString("ngaySinh");
-                    String sdt = rs.getString("SĐT");
-                    String cccd = rs.getString("CCCD");
-                    String matKhau = rs.getString("matKhau");
-                    String tenDangNhap = rs.getString("tenDangNhap");
-                    String soPhong = rs.getString("soPhong");
-                    String ghiChu = "đã duyệt";
-
-                    // Cập nhật ghi chú trong bảng tai_khoan
-                    updateStatement.setString(1, ghiChu);
-                    updateStatement.setInt(2, id); // Cập nhật theo ID
-                    updateStatement.executeUpdate();
-
-                    // Chèn dữ liệu vào bảng nguoi_dung
-                    insertStatement.setString(1, hoTen);
-                    insertStatement.setString(2, ngaySinh);
-                    insertStatement.setString(3, sdt);
-                    insertStatement.setString(4, tenDangNhap);
-                    insertStatement.setString(5, cccd);
-                    insertStatement.setString(6, matKhau);
-                    insertStatement.setString(7, soPhong);
-                    insertStatement.executeUpdate(); // Thực thi chèn dữ liệu
+        List<ModelTaiKhoan> list = getSelectedTaiKhoan();
+        if (list.isEmpty()){
+            Notifications.getInstance().show(Notifications.Type.WARNING, "Hãy chọn mục để chỉnh sửa!");
+        } else {
+            // Kiểm tra xem có tài khoản nào đã duyệt chưa
+            boolean hasApproved = false;
+            for (ModelTaiKhoan tk : list) {
+                if ("Đã duyệt".equals(tk.getGhiChu())) {
+                    hasApproved = true;
+                    break; // Nếu có tài khoản đã duyệt thì không cần kiểm tra tiếp
                 }
-                rs.close();
             }
 
-            // Thông báo thành công
-            JOptionPane.showMessageDialog(this, "Duyệt thành công! Dữ liệu đã được cập nhật và chuyển sang bảng 'nguoi_dung'.");
+            if (hasApproved) {
+                // Nếu có tài khoản đã duyệt, thông báo cho người dùng
+                JOptionPane.showMessageDialog(this, "Trong các mục đã chọn có tài khoản đã duyệt rồi!");
+            } else {
+                // Đếm số tài khoản đã chọn
+                int count = list.size();
 
-            // Làm mới dữ liệu trên bảng
-            loadData(1);
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Lỗi cơ sở dữ liệu: " + e.getMessage());
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
-        }    
+                // Duyệt qua từng tài khoản và cập nhật "Đã duyệt"
+                for (ModelTaiKhoan tk : list) {
+                    tk.setGhiChu("Đã duyệt");
+                    try {
+                        service.edit(tk);
+                    } catch (SQLException ex) {
+                        JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi duyệt tài khoản!");
+                        return; // Nếu có lỗi, dừng và không tiếp tục
+                    }
+                }
+                loadData(1); // Tải lại dữ liệu
+                // Hiển thị thông báo với số lượng tài khoản đã duyệt
+                JOptionPane.showMessageDialog(this, "Duyệt thành công " + count + " tài khoản!");
+            }
+        }
     }//GEN-LAST:event_buttonApproveActionPerformed
+
+    private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
+        searchData(txtSearch.getText().trim());
+    }//GEN-LAST:event_txtSearchKeyReleased
+
+    private void buttonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDeleteActionPerformed
+        List<ModelTaiKhoan> list = getSelectedTaiKhoan();
+        if (list.isEmpty()){
+            Notifications.getInstance().show(Notifications.Type.WARNING, "Hãy chọn mục để xóa!");
+        } else {
+            // Đếm số tài khoản đã chọn để xóa
+            int count = list.size();
+
+            // Xác nhận hành động xóa với người dùng
+            int confirm = JOptionPane.showConfirmDialog(this, 
+                "Bạn có chắc chắn muốn xóa " + count + " tài khoản này?", 
+                "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+
+            // Nếu người dùng xác nhận xóa
+            if (confirm == JOptionPane.YES_OPTION) {
+                try {
+                    for (ModelTaiKhoan tk : list) {
+                        service.delete(tk); // Gọi phương thức xóa trong service
+                    }
+                    loadData(1); // Tải lại dữ liệu
+                    JOptionPane.showMessageDialog(this, "Đã xóa thành công " + count + " tài khoản!");
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi xóa tài khoản!");
+                }
+            }
+        }
+    }//GEN-LAST:event_buttonDeleteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

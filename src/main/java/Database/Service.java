@@ -198,18 +198,18 @@ public class Service {
             case "ModelTaiKhoan":
                 baseQuery = "SELECT * FROM `tai_khoan`";
                 if (searchInput != null && !searchInput.isEmpty()) {
-                    baseQuery += " WHERE hoTen LIKE ? OR ghiChu LIKE ? OR ngaySinh LIKE ?";
+                    baseQuery += " WHERE hoTen LIKE ? OR soPhong LIKE ?";
                 }
-                baseQuery += " ORDER BY hoTen";
+                baseQuery += " ORDER BY ghiChu, hoTen";
                 return baseQuery;
             
             case "ModelHoGiaDinh":
-            baseQuery = "SELECT * FROM `ho_gia_dinh`";
-            if (searchInput != null && !searchInput.isEmpty()) {
-                baseQuery += " WHERE chuHo LIKE ? OR soPhong LIKE ?";
-            }
-            baseQuery += " ORDER BY soPhong";
-            return baseQuery;
+                baseQuery = "SELECT * FROM `ho_gia_dinh`";
+                if (searchInput != null && !searchInput.isEmpty()) {
+                    baseQuery += " WHERE chuHo LIKE ? OR soPhong LIKE ?";
+                }
+                baseQuery += " ORDER BY soPhong";
+                return baseQuery;
             
             default:
                 throw new IllegalArgumentException("Unsupported class: " + clazz.getName());
@@ -452,7 +452,7 @@ public class Service {
                 baseQuery = "SELECT * FROM `loai_khoan_thu` ORDER BY tenKhoanThu_Name LIMIT ?, ?";
                 
             case "ModelTaiKhoan" -> // Truy vấn cho ModelTaiKhoan
-                baseQuery = "SELECT * FROM `tai_khoan` ORDER BY hoTen LIMIT ?, ?";
+                baseQuery = "SELECT * FROM `tai_khoan` ORDER BY ghiChu, hoTen LIMIT ?, ?";
                 
             case "ModelHoGiaDinh" -> // Truy vấn cho ModelTaiKhoan
                 baseQuery = "SELECT * FROM `ho_gia_dinh` ORDER BY hoTen LIMIT ?, ?";

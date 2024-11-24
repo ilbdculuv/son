@@ -437,7 +437,7 @@ public class RegisterFrame extends javax.swing.JFrame {
             pstmt.setString(5, roomPosition);
             pstmt.setString(6, loginName);
             pstmt.setString(7, password);
-            pstmt.setString(8, "chưa duyệt");
+            pstmt.setString(8, "Chưa duyệt");
             pstmt.setBoolean(9, gender);
             pstmt.executeUpdate();
             

@@ -177,7 +177,7 @@ public class ForgotPasswordPanel extends javax.swing.JPanel {
             }
 
             // Kiểm tra tên đăng nhập và CCCD
-            String queryCheck = "SELECT * FROM nguoi_dung WHERE tenDangNhap = ? AND CCCD = ?";
+            String queryCheck = "SELECT * FROM 'tai_khoan' WHERE tenDangNhap = ? AND CCCD = ?";
             PreparedStatement pst = con.prepareStatement(queryCheck);
             pst.setString(1, loginName);
             pst.setString(2, cccd);
@@ -189,10 +189,11 @@ public class ForgotPasswordPanel extends javax.swing.JPanel {
             }
 
             // Cập nhật mật khẩu
-            String queryUpdate = "UPDATE nguoi_dung SET matKhau = ? WHERE tenDangNhap = ?";
+            String queryUpdate = "UPDATE 'tai_khoan' SET matKhau = ? WHERE tenDangNhap = ? AND CCCD = ?";
             PreparedStatement pstUpdate = con.prepareStatement(queryUpdate);
             pstUpdate.setString(1, newPassword); // Lưu mật khẩu mới trực tiếp
             pstUpdate.setString(2, loginName);
+            pstUpdate.setString(3, cccd);
             int rowsUpdated = pstUpdate.executeUpdate();
 
             if (rowsUpdated > 0) {
