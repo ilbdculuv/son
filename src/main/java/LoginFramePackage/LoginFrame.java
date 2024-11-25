@@ -24,7 +24,7 @@ import javax.swing.UIManager;
 public class LoginFrame extends javax.swing.JFrame {
     
     private static final Logger logger = Logger.getLogger(LoginFrame.class.getName());
-    
+    private String name;
     public LoginFrame() {
         initComponents();
         //Set nền và icon cho chương trình
@@ -244,8 +244,8 @@ public class LoginFrame extends javax.swing.JFrame {
 
             LoginName = jTextFieldTenTaiKhoan.getText();
             Password = jTextFieldMatKhau.getText();
-
-            query = "SELECT matKhau FROM tai_khoan WHERE tenDangNhap = ? AND ghiChu = 'Đã duyệt'";
+// set name
+            query = "SELECT hoTen, matKhau FROM tai_khoan WHERE tenDangNhap = ? AND ghiChu = 'Đã duyệt'";
 
             try (PreparedStatement stmt = con.prepareStatement(query)) {
                 stmt.setString(1, LoginName);
@@ -258,7 +258,9 @@ public class LoginFrame extends javax.swing.JFrame {
 
                 if (notFound == 1 && Password.equals(passDb)) { 
                     // Replace with a more secure password comparison, e.g. bcrypt
+                    name = rs.getString("hoTen");
                     Home HomeFrame = new Home();
+                    HomeFrame.setName(name);
                     HomeFrame.setVisible(true);
                     HomeFrame.pack();
                     HomeFrame.setLocationRelativeTo(null);

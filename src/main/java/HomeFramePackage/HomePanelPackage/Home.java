@@ -15,14 +15,16 @@ import java.awt.Font;
 import javax.swing.UIManager;
 import raven.popup.GlassPanePopup;
 public class Home extends javax.swing.JFrame {
-    
-    
+    // Ho ten
+    public void setName(String name){
+        menuPanel.setName(name);
+    }
     
     public Home() {
         GlassPanePopup.install(this);
         initComponents();
         
-        menuPanel2.addEventMenuSelected(new EventMenuSelected(){
+        menuPanel.addEventMenuSelected(new EventMenuSelected(){
            
             @Override
             public void selected(int index) {
@@ -72,7 +74,7 @@ public class Home extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        menuPanel2 = new HomeFramePackage.HomeMenuPackage.MenuPanel();
+        menuPanel = new HomeFramePackage.HomeMenuPackage.MenuPanel();
         mainPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -85,14 +87,14 @@ public class Home extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(menuPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(menuPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(menuPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+            .addComponent(menuPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
             .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
@@ -109,6 +111,6 @@ public class Home extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel mainPanel;
-    private HomeFramePackage.HomeMenuPackage.MenuPanel menuPanel2;
+    private HomeFramePackage.HomeMenuPackage.MenuPanel menuPanel;
     // End of variables declaration//GEN-END:variables
 }
